@@ -7,6 +7,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 
@@ -33,6 +34,9 @@ public class mm_command implements CommandExecutor{
 			if (cmd.getName().equalsIgnoreCase("mm")){
 				boolean useDayTimer = plugin.getConfig().getBoolean("useDayTimer");
 				final String introMessage = plugin.getConfig().getString("introMessage");
+				final List<String> countdownMessages = plugin.getConfig().getStringList("countdownMessages");
+				int list2 = countdownMessages.size();
+				final int ticks2 = list2 * 40;
 				
 				if (args.length == 0){
 					// Name & version number.
@@ -472,13 +476,9 @@ public class mm_command implements CommandExecutor{
 								
 								final List<String> mmPlayers = plugin.getConfig().getStringList("MM.players");
 								List<String> welcomeMessages = plugin.getConfig().getStringList("welcomeMessages");
-								final List<String> countdownMessages = plugin.getConfig().getStringList("countdownMessages");
 								
 								int list1 = welcomeMessages.size();
 								final int ticks = list1 * 100;
-								
-								int list2 = countdownMessages.size();
-								final int ticks2 = list2 * 40;
 								
 								// This is set to 1 currently. At the release it will be set at 5.
 								if (mmPlayers.size() < 1){
@@ -500,11 +500,12 @@ public class mm_command implements CommandExecutor{
 														int y = plugin.getConfig().getInt("arenaWorld" + ".y");
 														int z = plugin.getConfig().getInt("arenaWorld" + ".z");
 														
-														Bukkit.broadcastMessage(introMessage + " §bMob Mondays has begun! For details on your stats, type §c/mm stats§b.");
-														
+														Bukkit.broadcastMessage(introMessage + " §bMob Mondays has begun! Good luck!");
+														player.setHealth(20);
+														player.setFoodLevel(20);
+														player.setSaturation(200);
 														world.setFullTime(18000);
 														world.setGameRuleValue("doDaylightCycle", "false");
-															
 														for (int i = 0; i < 20; i++){
 															world.spawnEntity(new Location(arenaWorld, x, y, z), org.bukkit.entity.EntityType.ZOMBIE);
 														}
@@ -522,7 +523,7 @@ public class mm_command implements CommandExecutor{
 							plugin.getConfig().set("gameStarted", false);
 							plugin.getConfig().set("zombiesKilled", null);
 							plugin.getConfig().set("skeliesKilled", null);
-							plugin.getConfig().set("spidersmKilled", null);
+							plugin.getConfig().set("spidersKilled", null);
 							plugin.saveConfig();
 							for (Entity entities : player.getWorld().getEntities()){
 								if (entities instanceof Monster){
@@ -539,6 +540,124 @@ public class mm_command implements CommandExecutor{
 							return true;
 						}
 					}
+				}
+				if (args[0].equalsIgnoreCase("round")){
+					boolean gameStarted = plugin.getConfig().getBoolean("gameStarted");
+					boolean round1Complete = plugin.getConfig().getBoolean("round1Complete");
+					boolean round2Complete = plugin.getConfig().getBoolean("round2Complete");
+					boolean round3Complete = plugin.getConfig().getBoolean("round3Complete");
+					boolean round4Complete = plugin.getConfig().getBoolean("round4Complete");
+					boolean round5Complete = plugin.getConfig().getBoolean("round5Complete");
+					final World arenaWorld = Bukkit.getWorld(plugin.getConfig().getString("arenaWorld" + ".world"));
+					final int x = plugin.getConfig().getInt("arenaWorld" + ".x");
+					final int y = plugin.getConfig().getInt("arenaWorld" + ".y");
+					final int z = plugin.getConfig().getInt("arenaWorld" + ".z");
+					
+					
+					if (gameStarted != true){
+						sender.sendMessage(introMessage + " §cThere is not a game occuring! §7Type §c/mm start §7to start a game.");
+						return true;
+					}
+					if (round1Complete == true){
+						Bukkit.broadcastMessage(introMessage + " §bThe next round has been initialized! It will be begin in...");
+						new Task2(plugin, countdownMessages).run();
+						Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin,
+								new Runnable(){ public void run(){
+									Bukkit.broadcastMessage(introMessage + " §bRound 2 has begun!");												
+									for (int i = 0; i < 30; i++){
+										for (World world : Bukkit.getWorlds()){
+											world.spawnEntity(new Location(arenaWorld, x, y, z), EntityType.SKELETON);
+										}
+									}
+									plugin.getConfig().set("roundNumber", 2);
+									plugin.getConfig().set("round1Complete", null);
+									plugin.getConfig().set("zombiesKilled", null);
+									plugin.saveConfig();
+									return;
+								}}, ticks2);
+						return true;
+					}
+					if (round2Complete == true){
+						Bukkit.broadcastMessage(introMessage + " §bThe next round has been initialized! It will be begin in...");
+						new Task2(plugin, countdownMessages).run();
+						Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin,
+								new Runnable(){ public void run(){
+									Bukkit.broadcastMessage(introMessage + " §bRound 3 has begun!");												
+									for (int i = 0; i < 40; i++){
+										for (World world : Bukkit.getWorlds()){
+											world.spawnEntity(new Location(arenaWorld, x, y, z), EntityType.SPIDER);
+										}
+									}
+									plugin.getConfig().set("roundNumber", 3);
+									plugin.getConfig().set("round2Complete", null);
+									plugin.getConfig().set("skeliesKilled", null);
+									plugin.saveConfig();
+									return;
+								}}, ticks2);
+						return true;
+					}
+					if (round3Complete == true){
+						Bukkit.broadcastMessage(introMessage + " §bThe next round has been initialized! It will be begin in...");
+						new Task2(plugin, countdownMessages).run();
+						Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin,
+						  new Runnable(){ public void run(){
+						    Bukkit.broadcastMessage(introMessage + " §bRound 4 has begun!");												
+						    for (int i = 0; i < 25; i++){
+						      for (World world : Bukkit.getWorlds()){
+										world.spawnEntity(new Location(arenaWorld, x, y, z), EntityType.ZOMBIE);
+						      }
+						    }
+						    for (int i = 0; i < 25; i++){
+						      for (World world : Bukkit.getWorlds()){
+						        world.spawnEntity(new Location(arenaWorld, x, y, z), EntityType.SKELETON);
+						      }
+						    }
+						    plugin.getConfig().set("roundNumber", 4);
+						    plugin.getConfig().set("round3Complete", null);
+						    plugin.getConfig().set("spidersKilled", null);
+						    plugin.saveConfig();
+						    return;
+						  }}, ticks2);
+						return true;
+					}
+					if (round4Complete == true){
+						Bukkit.broadcastMessage(introMessage + " §bThe next round has been initialized! It will be begin in...");
+						new Task2(plugin, countdownMessages).run();
+						Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin,
+						  new Runnable(){ public void run(){
+						    Bukkit.broadcastMessage(introMessage + " §bRound 5 has begun!");
+								for (int i = 0; i < 30; i++){
+									for (World world : Bukkit.getWorlds()){
+						        world.spawnEntity(new Location(arenaWorld, x, y, z), EntityType.ZOMBIE);
+									}
+								}
+								for (int i = 0; i < 30; i++){
+									for (World world : Bukkit.getWorlds()){
+						        world.spawnEntity(new Location(arenaWorld, x, y, z), EntityType.SKELETON);
+									}
+								}
+								for (int i = 0; i < 30; i++){
+									for (World world : Bukkit.getWorlds()){
+										world.spawnEntity(new Location(arenaWorld, x, y, z), EntityType.SPIDER);
+									}
+								}
+								plugin.getConfig().set("roundNumber", 5);
+								plugin.getConfig().set("round4Complete", null);
+								plugin.getConfig().set("zombiesKilled", null);
+								plugin.getConfig().set("skeliesKilled", null);
+								plugin.getConfig().set("zombiesFullKilled", null);
+								plugin.getConfig().set("skeliesFullKilled", null);
+								plugin.saveConfig();
+								return;
+						  }}, ticks2);
+						return true;
+					}
+					if (round5Complete == true){
+						Bukkit.broadcastMessage(introMessage + " §bThe next round has been initialized! It will be begin in...");
+						
+						return true;
+					}
+					return true;
 				}
 				sender.sendMessage(introMessage + " §cUnknown argument. §7Type §c/help §7for command usage.");
 				return true;

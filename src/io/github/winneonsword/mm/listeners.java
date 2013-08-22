@@ -22,7 +22,6 @@ import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class listeners implements Listener{
@@ -67,20 +66,17 @@ public class listeners implements Listener{
 		int roundNumber = plugin.getConfig().getInt("roundNumber");
 		boolean gameStarted = plugin.getConfig().getBoolean("gameStarted");
 		final String introMessage = plugin.getConfig().getString("introMessage");
-		final List<String> countdownMessages = plugin.getConfig().getStringList("countdownMessages");
-		int list2 = countdownMessages.size();
-		final int ticks2 = list2 * 40;
+		final Player player = event.getEntity().getKiller();
 		final World arenaWorld = Bukkit.getWorld(plugin.getConfig().getString("arenaWorld" + ".world"));
 		final int x = plugin.getConfig().getInt("arenaWorld" + ".x");
 		final int y = plugin.getConfig().getInt("arenaWorld" + ".y");
 		final int z = plugin.getConfig().getInt("arenaWorld" + ".z");
-		final Player player = event.getEntity().getKiller();
 		
 		if (!(event.getEntity().getKiller() instanceof Player)){
 			if (gameStarted == true){
+				event.getDrops().clear();
 				for (World world : Bukkit.getWorlds()){
 					world.spawnEntity(new Location(arenaWorld, x, y, z), event.getEntityType());
-					return;
 				}
 				return;
 			}
@@ -104,25 +100,11 @@ public class listeners implements Listener{
 								((Monster) entities).remove();
 							}
 						}
-						Bukkit.broadcastMessage(introMessage + " §bRound 1 is now complete! The next round will be begin in...");
-						
-						Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin,
-								new Runnable(){ public void run(){
-									new Task2(plugin, countdownMessages).run();
-									Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin,
-											new Runnable(){ public void run(){
-												Bukkit.broadcastMessage(introMessage + " §bRound 2 has begun!");												
-												for (int i = 0; i < 30; i++){
-													for (World world : Bukkit.getWorlds()){
-														world.spawnEntity(new Location(arenaWorld, x, y, z), EntityType.SKELETON);
-													}
-												}
-												plugin.getConfig().set("roundNumber", 2);
-												plugin.getConfig().set("zombiesKilled", null);
-												plugin.saveConfig();
-												return;
-											}}, ticks2);
-								}}, 20);
+						Bukkit.broadcastMessage(introMessage + " §bRound 1 is now complete! To start the next round, a staff needs to type §c/mm round§b!");
+						plugin.getConfig().set("round1Complete", true);
+						player.setHealth(20);
+						player.setFoodLevel(20);
+						player.setSaturation(200);
 					}
 					if (randomNumber == 3){
 						ItemStack shard = new ItemStack(Material.QUARTZ, 1);
@@ -151,38 +133,12 @@ public class listeners implements Listener{
 									((Monster) entities).remove();
 								}
 							}
-							Bukkit.broadcastMessage(introMessage + " §bRound 4 is now complete! The next round will be begin in...");
+							Bukkit.broadcastMessage(introMessage + " §bRound 4 is now complete! To start the next round, a staff needs to type §c/mm round§b!");
+							plugin.getConfig().set("round4Complete", true);
+							player.setHealth(20);
+							player.setFoodLevel(20);
+							player.setSaturation(200);
 							
-							Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin,
-									new Runnable(){ public void run(){
-										new Task2(plugin, countdownMessages).run();
-										Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin,
-												new Runnable(){ public void run(){
-													Bukkit.broadcastMessage(introMessage + " §bRound 5 has begun!");
-													for (int i = 0; i < 30; i++){
-														for (World world : Bukkit.getWorlds()){
-															world.spawnEntity(new Location(arenaWorld, x, y, z), EntityType.ZOMBIE);
-														}
-													}
-													for (int i = 0; i < 30; i++){
-														for (World world : Bukkit.getWorlds()){
-															world.spawnEntity(new Location(arenaWorld, x, y, z), EntityType.SKELETON);
-														}
-													}
-													for (int i = 0; i < 30; i++){
-														for (World world : Bukkit.getWorlds()){
-															world.spawnEntity(new Location(arenaWorld, x, y, z), EntityType.SPIDER);
-														}
-													}
-													plugin.getConfig().set("roundNumber", 5);
-													plugin.getConfig().set("zombiesKilled", null);
-													plugin.getConfig().set("skeliesKilled", null);
-													plugin.getConfig().set("zombiesFullKilled", null);
-													plugin.getConfig().set("skeliesFullKilled", null);
-													plugin.saveConfig();
-													return;
-												}}, ticks2);
-									}}, 20);
 						}
 					}
 					if (randomNumber == 3){
@@ -197,6 +153,9 @@ public class listeners implements Listener{
 						event.getDrops().addAll(drops);
 						return;
 					}
+				}
+				if (roundNumber == 5){
+					
 				}
 			}
 		}
@@ -217,25 +176,11 @@ public class listeners implements Listener{
 								((Monster) entities).remove();
 							}
 						}
-						Bukkit.broadcastMessage(introMessage + " §bRound 2 is now complete! The next round will be begin in...");
-						
-						Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin,
-								new Runnable(){ public void run(){
-									new Task2(plugin, countdownMessages).run();
-									Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin,
-											new Runnable(){ public void run(){
-												Bukkit.broadcastMessage(introMessage + " §bRound 3 has begun!");
-												for (int i = 0; i < 40; i++){
-													for (World world : Bukkit.getWorlds()){
-														world.spawnEntity(new Location(arenaWorld, x, y, z), EntityType.SPIDER);
-													}
-												}
-												plugin.getConfig().set("roundNumber", 3);
-												plugin.getConfig().set("skeliesKilled", null);
-												plugin.saveConfig();
-												return;
-											}}, ticks2);
-								}}, 20);
+						Bukkit.broadcastMessage(introMessage + " §bRound 2 is now complete! To start the next round, a staff needs to type §c/mm round§b!");
+						plugin.getConfig().set("round2Complete", true);
+						player.setHealth(20);
+						player.setFoodLevel(20);
+						player.setSaturation(200);
 					}
 					if (randomNumber == 3){
 						ItemStack shard = new ItemStack(Material.QUARTZ, 1);
@@ -264,38 +209,11 @@ public class listeners implements Listener{
 									((Monster) entities).remove();
 								}
 							}
-							Bukkit.broadcastMessage(introMessage + " §bRound 4 is now complete! The next round will be begin in...");
-							
-							Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin,
-									new Runnable(){ public void run(){
-										new Task2(plugin, countdownMessages).run();
-										Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin,
-												new Runnable(){ public void run(){
-													Bukkit.broadcastMessage(introMessage + " §bRound 5 has begun!");
-													for (int i = 0; i < 30; i++){
-														for (World world : Bukkit.getWorlds()){
-															world.spawnEntity(new Location(arenaWorld, x, y, z), EntityType.ZOMBIE);
-														}
-													}
-													for (int i = 0; i < 30; i++){
-														for (World world : Bukkit.getWorlds()){
-															world.spawnEntity(new Location(arenaWorld, x, y, z), EntityType.SKELETON);
-														}
-													}
-													for (int i = 0; i < 30; i++){
-														for (World world : Bukkit.getWorlds()){
-															world.spawnEntity(new Location(arenaWorld, x, y, z), EntityType.SPIDER);
-														}
-													}
-													plugin.getConfig().set("roundNumber", 5);
-													plugin.getConfig().set("zombiesKilled", null);
-													plugin.getConfig().set("skeliesKilled", null);
-													plugin.getConfig().set("zombiesFullKilled", null);
-													plugin.getConfig().set("skeliesFullKilled", null);
-													plugin.saveConfig();
-													return;
-												}}, ticks2);
-									}}, 20);
+							Bukkit.broadcastMessage(introMessage + " §bRound 4 is now complete! To start the next round, a staff needs to type §c/mm round§b!");
+							plugin.getConfig().set("round4Complete", true);
+							player.setHealth(20);
+							player.setFoodLevel(20);
+							player.setSaturation(200);
 						}
 					}
 					if (randomNumber == 3){
@@ -325,35 +243,19 @@ public class listeners implements Listener{
 					plugin.saveConfig();
 					int totalSpidersKilled = plugin.getConfig().getInt("spidersKilled");
 					if (totalSpidersKilled == 40){
-						
+						player.setHealth(20);
+						player.setFoodLevel(20);
+						player.setSaturation(200);
 						for (Entity entities : player.getWorld().getEntities()){
 							if (entities instanceof Monster){
 								((Monster) entities).remove();
 							}
 						}
-						Bukkit.broadcastMessage(introMessage + " §bRound 3 is now complete! The next round will be begin in...");
-						
-						Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin,
-								new Runnable(){ public void run(){
-									new Task2(plugin, countdownMessages).run();
-									Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin,
-											new Runnable(){ public void run(){
-												Bukkit.broadcastMessage(introMessage + " §bRound 4 has begun!");												
-												for (int i = 0; i < 25; i++){
-													for (World world : Bukkit.getWorlds()){
-														world.spawnEntity(new Location(arenaWorld, x, y, z), EntityType.ZOMBIE);
-													}
-												}
-												for (int i = 0; i < 25; i++){
-													for (World world : Bukkit.getWorlds()){
-														world.spawnEntity(new Location(arenaWorld, x, y, z), EntityType.SKELETON);
-													}
-												}
-												plugin.getConfig().set("roundNumber", 4);
-												plugin.saveConfig();
-												return;
-											}}, ticks2);
-								}}, 20);
+						Bukkit.broadcastMessage(introMessage + " §bRound 3 is now complete! To start the next round, a staff needs to type §c/mm round§b!");
+						plugin.getConfig().set("round3Complete", true);
+						player.setHealth(20);
+						player.setFoodLevel(20);
+						player.setSaturation(200);
 					}
 					if (randomNumber == 3){
 						ItemStack shard = new ItemStack(Material.QUARTZ, 1);
