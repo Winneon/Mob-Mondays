@@ -1,0 +1,19 @@
+name: Mob Mondays
+main: io.github.winneonsword.mm.mm
+version: 0.3-a
+commands:
+  mm:
+    description: The main help menu of MM.
+    usage: /mm
+    permission: mm.mm
+    permission-message: You do not have permission to execute this command!
+permissions:
+  mm.*:
+    description: Gives access to all Mob Mondays commands.
+    children:
+      mm.mm: true
+      mm.start: true
+  mm.mm:
+    description: Allows access to the main /mm command.
+  mm.start:
+    description: Allows the ability to activate or start a game.
