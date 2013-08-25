@@ -1,10 +1,10 @@
 package io.github.winneonsword.mm;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
-
-
 
 public final class mm extends JavaPlugin {
 	
@@ -42,9 +42,11 @@ class Task implements Runnable{
 	
 	public void run(){
 		String introMessage = plugin.getConfig().getString("introMessage");
-		
-		plugin.getServer().broadcastMessage(introMessage + " " + list.get(count++));
-		
+		List<String> mmPlayers = plugin.getConfig().getStringList("MM.players");
+		for (int i = 0; i < mmPlayers.size(); i++){
+			Player p = Bukkit.getPlayer(mmPlayers.get(i));
+			p.sendMessage(introMessage + " " + list.get(count++));
+		}
 		if (count < list.size()){
 			plugin.getServer().getScheduler().runTaskLater(plugin, this, 100);
 		}
@@ -62,9 +64,11 @@ class Task2 implements Runnable{
 	
 	public void run(){
 		String introMessage = plugin.getConfig().getString("introMessage");
-		
-		plugin.getServer().broadcastMessage(introMessage + " " + list.get(count++));
-		
+		List<String> mmPlayers = plugin.getConfig().getStringList("MM.players");
+		for (int i = 0; i < mmPlayers.size(); i++){
+			Player p = Bukkit.getPlayer(mmPlayers.get(i));
+			p.sendMessage(introMessage + " " + list.get(count++));
+		}
 		if (count < list.size()){
 			plugin.getServer().getScheduler().runTaskLater(plugin, this, 40);
 		}

@@ -1,0 +1,27 @@
+﻿useDayTimer: false
+introMessage: §e[ §7mm §e]
+minSize: 1
+welcomeMessages:
+- '§7Welcome to Mob Mondays!'
+- '§7Please read carefully for the rules!'
+- '§7No leaving the arena via any command except §c/mm leave§7!'
+- '§7If you find a glitch, please report it!'
+- '§7Do NOT ask for heals or feeds! These get distributed automatically at the start of the game!'
+- '§7All MM related commands are located under §c/mm commands§7!'
+- '§7The player list & player total is located under §c/mm list§7.'
+- '§7To view your stats such as shards, mob kills, etc, type §c/mm stats§7!'
+- '§7To use your §calpha §7ability, right click the §cgreen §7music disc!'
+- '§7To use your §comega §7ability, right click the §cyellow §7music disc!'
+- '§7Remember, abilities use §cshards §7as a cost! The prices are listed under §c/mm commands§7.'
+- '§7To deposit the §cshards §7you collect, just §cright click §7them!'
+- '§7Allright! Here we go!'
+countdownMessages:
+- '§aThree!'
+- '§6Two!'
+- '§cOne!'
+arenaSet: false
+gameStarted: false
+listDisplay: ''
+Users: {}
+MM:
+  players: []

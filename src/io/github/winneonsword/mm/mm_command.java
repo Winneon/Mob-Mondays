@@ -1,16 +1,23 @@
 package io.github.winneonsword.mm;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
@@ -37,10 +44,11 @@ public class mm_command implements CommandExecutor{
 				final List<String> countdownMessages = plugin.getConfig().getStringList("countdownMessages");
 				int list2 = countdownMessages.size();
 				final int ticks2 = list2 * 40;
+				final List<String> mmPlayers = plugin.getConfig().getStringList("MM.players");
 				
 				if (args.length == 0){
 					// Name & version number.
-					sender.sendMessage(introMessage + " §7Mob Mondays, v0.3-a");
+					sender.sendMessage(introMessage + " §7Mob Mondays, v1.0-a");
 					return true;
 				}
 				if (args[0].equalsIgnoreCase("?") || args[0].equalsIgnoreCase("help")){
@@ -72,13 +80,13 @@ public class mm_command implements CommandExecutor{
 					plugin.getConfig().set("Users." + sender.getName() + ".choosingClass", true);
 					
 					sender.sendMessage(introMessage + " §7Choose a class below:");
-					sender.sendMessage("  §cmedic §7- Give extra hearts or regen for a limited time.");
+					sender.sendMessage("  §cmedic §7- Get extra hearts or give regen for a limited time.");
 					sender.sendMessage("  §cspirit §7- Revieve fly mode for limited time.");
 					sender.sendMessage("  §cwarrior §7- Create a knockback blast that stuns opponents..");
 					sender.sendMessage("  §cinferno §7- Forge a fire burst and scorch opponents.");
 					sender.sendMessage("  §croadrunner §7- Recieve speedy boots for a limted time.");
 					sender.sendMessage("  §csniper §7- Headshot opponents quickly and swiftly.");
-					sender.sendMessage("§7Type §c/mm select <class> §7to select a class.");
+					sender.sendMessage("§7Type §c/mm select <class> §7to select a class. Type §c/mm cancel §7to cancel this operation.");
 					return true;
 				}
 				if (args[0].equalsIgnoreCase("select") && args.length == 1){
@@ -120,7 +128,6 @@ public class mm_command implements CommandExecutor{
 					plugin.getConfig().set("Users." + sender.getName() + ".isPlaying", true);
 					plugin.getConfig().set("Users." + sender.getName() + ".choosingClass", null);
 					plugin.getConfig().set("Users." + sender.getName() + ".displayName", player.getDisplayName());
-					List<String> mmPlayers = plugin.getConfig().getStringList("MM.players");
 					mmPlayers.add(sender.getName());
 					plugin.getConfig().set("MM.players", mmPlayers);
 					String listDisplay = plugin.getConfig().getString("listDisplay");
@@ -159,7 +166,6 @@ public class mm_command implements CommandExecutor{
 					plugin.getConfig().set("Users." + sender.getName() + ".isPlaying", true);
 					plugin.getConfig().set("Users." + sender.getName() + ".choosingClass", null);
 					plugin.getConfig().set("Users." + sender.getName() + ".displayName", player.getDisplayName());
-					List<String> mmPlayers = plugin.getConfig().getStringList("MM.players");
 					mmPlayers.add(sender.getName());
 					plugin.getConfig().set("MM.players", mmPlayers);
 					String listDisplay = plugin.getConfig().getString("listDisplay");
@@ -198,7 +204,6 @@ public class mm_command implements CommandExecutor{
 					plugin.getConfig().set("Users." + sender.getName() + ".isPlaying", true);
 					plugin.getConfig().set("Users." + sender.getName() + ".choosingClass", null);
 					plugin.getConfig().set("Users." + sender.getName() + ".displayName", player.getDisplayName());
-					List<String> mmPlayers = plugin.getConfig().getStringList("MM.players");
 					mmPlayers.add(sender.getName());
 					plugin.getConfig().set("MM.players", mmPlayers);
 					String listDisplay = plugin.getConfig().getString("listDisplay");
@@ -237,7 +242,6 @@ public class mm_command implements CommandExecutor{
 					plugin.getConfig().set("Users." + sender.getName() + ".isPlaying", true);
 					plugin.getConfig().set("Users." + sender.getName() + ".choosingClass", null);
 					plugin.getConfig().set("Users." + sender.getName() + ".displayName", player.getDisplayName());
-					List<String> mmPlayers = plugin.getConfig().getStringList("MM.players");
 					mmPlayers.add(sender.getName());
 					plugin.getConfig().set("MM.players", mmPlayers);
 					String listDisplay = plugin.getConfig().getString("listDisplay");
@@ -276,7 +280,6 @@ public class mm_command implements CommandExecutor{
 					plugin.getConfig().set("Users." + sender.getName() + ".isPlaying", true);
 					plugin.getConfig().set("Users." + sender.getName() + ".choosingClass", null);
 					plugin.getConfig().set("Users." + sender.getName() + ".displayName", player.getDisplayName());
-					List<String> mmPlayers = plugin.getConfig().getStringList("MM.players");
 					mmPlayers.add(sender.getName());
 					plugin.getConfig().set("MM.players", mmPlayers);
 					String listDisplay = plugin.getConfig().getString("listDisplay");
@@ -315,7 +318,6 @@ public class mm_command implements CommandExecutor{
 					plugin.getConfig().set("Users." + sender.getName() + ".isPlaying", true);
 					plugin.getConfig().set("Users." + sender.getName() + ".choosingClass", null);
 					plugin.getConfig().set("Users." + sender.getName() + ".displayName", player.getDisplayName());
-					List<String> mmPlayers = plugin.getConfig().getStringList("MM.players");
 					mmPlayers.add(sender.getName());
 					plugin.getConfig().set("MM.players", mmPlayers);
 					String listDisplay = plugin.getConfig().getString("listDisplay");
@@ -379,6 +381,12 @@ public class mm_command implements CommandExecutor{
 					return true;
 				}
 				if (args[0].equalsIgnoreCase("cancel")){
+					boolean choosingClass = plugin.getConfig().getBoolean("Users." + sender.getName() + ".choosingClass");
+					if (choosingClass == true){
+						plugin.getConfig().set("Users." + sender.getName() + ".choosingClass", null);
+						sender.sendMessage(introMessage + " §7You have canceled the operation involving joining the queue.");
+						return true;
+					}
 					plugin.getConfig().set("Users." + sender.getName() + ".changingClass", null);
 					sender.sendMessage(introMessage + " §7You have canceled the operation involving changing classes!");
 					return true;
@@ -390,7 +398,6 @@ public class mm_command implements CommandExecutor{
 							return true;
 						}
 					}
-					List<String> mmPlayers = plugin.getConfig().getStringList("MM.players");
 					mmPlayers.remove(sender.getName());
 					plugin.getConfig().set("MM.players", mmPlayers);
 					String listDisplay = plugin.getConfig().getString("listDisplay");
@@ -427,6 +434,28 @@ public class mm_command implements CommandExecutor{
 					return true;
 				}
 				if (args[0].equalsIgnoreCase("butcher")){
+					if (args.length == 2){
+						try {
+							Double.parseDouble(args[1]);
+						} catch (NumberFormatException e){
+							sender.sendMessage(introMessage + " §cYou did not enter a number for the radius!");
+							return true;
+						}
+						double radius = Double.parseDouble(args[1]);
+						for (Entity entities : player.getNearbyEntities(radius, player.getWorld().getMaxHeight() * 2, radius)){
+							if (entities instanceof Monster){
+								((Monster) entities).remove();
+								int butcher = plugin.getConfig().getInt("butcher");
+								plugin.getConfig().set("butcher", butcher + 1);
+							}
+							plugin.saveConfig();
+						}
+						int butcher = plugin.getConfig().getInt("butcher");
+						sender.sendMessage(introMessage + " §7Successfully killed §c" + butcher + " §7hostile mobs.");
+						plugin.getConfig().set("butcher", null);
+						plugin.saveConfig();
+						return true;
+					}
 					for (Entity entities : player.getWorld().getEntities()){
 						if (entities instanceof Monster){
 							((Monster) entities).remove();
@@ -450,10 +479,53 @@ public class mm_command implements CommandExecutor{
 					}
 					plugin.getConfig().set("listDisplay", listDisplay.replaceFirst("§7,", ""));
 					String listDisplay2 = plugin.getConfig().getString("listDisplay");
-					sender.sendMessage(introMessage + " §bPlayers Joined:" + listDisplay2);
+					sender.sendMessage(introMessage + " §bPlayers Joined:" + listDisplay2 + " §e(§c" + mmPlayers.size() + "§e)");
 					plugin.getConfig().set("listDisplay", listDisplay);
 					plugin.saveConfig();
 					return true;
+				}
+				if (args[0].equalsIgnoreCase("stats")){
+					boolean gameStarted = plugin.getConfig().getBoolean("gameStarted");
+					if (useDayTimer == true){
+						if (calendar.get(Calendar.DAY_OF_WEEK) != 2){
+							sender.sendMessage(introMessage + " §cIt is not Monday! All MM commands are disabled until it is Monday!");
+							return true;
+						}
+					}
+					if (gameStarted != true){
+						sender.sendMessage(introMessage + " §cA game is not occuring at the moment!");
+						return true;
+					}
+					String Class = plugin.getConfig().getString("Users." + sender.getName() + ".class");
+					String currentClass = StringUtils.capitalize(Class);
+					int shards = plugin.getConfig().getInt("Users." + sender.getName() + ".shards");
+					int mobKills = plugin.getConfig().getInt("Users." + sender.getName() + ".mobKills");
+					sender.sendMessage(introMessage + " §7Current Stats:");
+					sender.sendMessage("  §7Class: §c" + currentClass);
+					sender.sendMessage("  §7Shards Deposited: §c" + shards);
+					sender.sendMessage("  §7Mob Kills: §c" + mobKills);
+					return true;
+				}
+				if (args[0].equalsIgnoreCase("commands")){
+					String currentClass = plugin.getConfig().getString("Users." + sender.getName() + ".class");
+					if (currentClass == "medic"){
+						
+					}
+					if (currentClass == "spirit"){
+						
+					}
+					if (currentClass == "warrior"){
+						
+					}
+					if (currentClass == "inferno"){
+						
+					}
+					if (currentClass == "roadrunner"){
+						
+					}
+					if (currentClass == "sniper"){
+						
+					}
 				}
 				if (args[0].equalsIgnoreCase("start")){
 					if (useDayTimer == true){
@@ -474,20 +546,21 @@ public class mm_command implements CommandExecutor{
 									return true;
 								}
 								
-								final List<String> mmPlayers = plugin.getConfig().getStringList("MM.players");
 								List<String> welcomeMessages = plugin.getConfig().getStringList("welcomeMessages");
 								
 								int list1 = welcomeMessages.size();
 								final int ticks = list1 * 100;
 								
-								// This is set to 1 currently. At the release it will be set at 5.
-								if (mmPlayers.size() < 1){
-									sender.sendMessage(introMessage + " §cThere is not 5 or more people currently in the player queue!");
+								int minSize = plugin.getConfig().getInt("minSize");
+								if (mmPlayers.size() < minSize){
+									sender.sendMessage(introMessage + " §cThere is not " + minSize + " or more players currently in the player queue!");
 									return true;
 								}
 								plugin.getConfig().set("gameStarted", true);
 								plugin.saveConfig();
-								
+								clearInventory();
+								distributeItems();
+								giveDiscs();
 								new Task(this.plugin, welcomeMessages).run();
 								
 								Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin,
@@ -500,7 +573,7 @@ public class mm_command implements CommandExecutor{
 														int y = plugin.getConfig().getInt("arenaWorld" + ".y");
 														int z = plugin.getConfig().getInt("arenaWorld" + ".z");
 														
-														Bukkit.broadcastMessage(introMessage + " §bMob Mondays has begun! Good luck!");
+														sendInfoMessage(" §bMob Mondays has begun! Good luck!");
 														player.setHealth(20);
 														player.setFoodLevel(20);
 														player.setSaturation(200);
@@ -520,10 +593,14 @@ public class mm_command implements CommandExecutor{
 						if (gameStarted == true){
 							sender.sendMessage(introMessage + " §cThere is already a game started!");
 							// Everything after this is for testing purposes only, and will be removed for the final release.
+							clearInventory();
 							plugin.getConfig().set("gameStarted", false);
 							plugin.getConfig().set("zombiesKilled", null);
 							plugin.getConfig().set("skeliesKilled", null);
 							plugin.getConfig().set("spidersKilled", null);
+							plugin.getConfig().set("Users", null);
+							plugin.getConfig().set("MM.players", null);
+							plugin.getConfig().set("listDisplay", "");
 							plugin.saveConfig();
 							for (Entity entities : player.getWorld().getEntities()){
 								if (entities instanceof Monster){
@@ -543,6 +620,10 @@ public class mm_command implements CommandExecutor{
 				}
 				if (args[0].equalsIgnoreCase("round")){
 					boolean gameStarted = plugin.getConfig().getBoolean("gameStarted");
+					if (gameStarted != true){
+						sender.sendMessage(introMessage + " §cThere is not a game occuring! §7Type §c/mm start §7to start a game.");
+						return true;
+					}
 					boolean round1Complete = plugin.getConfig().getBoolean("round1Complete");
 					boolean round2Complete = plugin.getConfig().getBoolean("round2Complete");
 					boolean round3Complete = plugin.getConfig().getBoolean("round3Complete");
@@ -552,18 +633,12 @@ public class mm_command implements CommandExecutor{
 					final int x = plugin.getConfig().getInt("arenaWorld" + ".x");
 					final int y = plugin.getConfig().getInt("arenaWorld" + ".y");
 					final int z = plugin.getConfig().getInt("arenaWorld" + ".z");
-					
-					
-					if (gameStarted != true){
-						sender.sendMessage(introMessage + " §cThere is not a game occuring! §7Type §c/mm start §7to start a game.");
-						return true;
-					}
 					if (round1Complete == true){
-						Bukkit.broadcastMessage(introMessage + " §bThe next round has been initialized! It will be begin in...");
+						sendInfoMessage(" §bThe next round has been initialized! It will be begin in...");
 						new Task2(plugin, countdownMessages).run();
 						Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin,
 								new Runnable(){ public void run(){
-									Bukkit.broadcastMessage(introMessage + " §bRound 2 has begun!");												
+									sendInfoMessage(" §bRound 2 has begun!");												
 									for (int i = 0; i < 30; i++){
 										for (World world : Bukkit.getWorlds()){
 											world.spawnEntity(new Location(arenaWorld, x, y, z), EntityType.SKELETON);
@@ -578,11 +653,11 @@ public class mm_command implements CommandExecutor{
 						return true;
 					}
 					if (round2Complete == true){
-						Bukkit.broadcastMessage(introMessage + " §bThe next round has been initialized! It will be begin in...");
+						sendInfoMessage(" §bThe next round has been initialized! It will be begin in...");
 						new Task2(plugin, countdownMessages).run();
 						Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin,
 								new Runnable(){ public void run(){
-									Bukkit.broadcastMessage(introMessage + " §bRound 3 has begun!");												
+									sendInfoMessage(" §bRound 3 has begun!");												
 									for (int i = 0; i < 40; i++){
 										for (World world : Bukkit.getWorlds()){
 											world.spawnEntity(new Location(arenaWorld, x, y, z), EntityType.SPIDER);
@@ -597,11 +672,11 @@ public class mm_command implements CommandExecutor{
 						return true;
 					}
 					if (round3Complete == true){
-						Bukkit.broadcastMessage(introMessage + " §bThe next round has been initialized! It will be begin in...");
+						sendInfoMessage(" §bThe next round has been initialized! It will be begin in...");
 						new Task2(plugin, countdownMessages).run();
 						Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin,
 						  new Runnable(){ public void run(){
-						    Bukkit.broadcastMessage(introMessage + " §bRound 4 has begun!");												
+							  sendInfoMessage(" §bRound 4 has begun!");												
 						    for (int i = 0; i < 25; i++){
 						      for (World world : Bukkit.getWorlds()){
 										world.spawnEntity(new Location(arenaWorld, x, y, z), EntityType.ZOMBIE);
@@ -621,11 +696,11 @@ public class mm_command implements CommandExecutor{
 						return true;
 					}
 					if (round4Complete == true){
-						Bukkit.broadcastMessage(introMessage + " §bThe next round has been initialized! It will be begin in...");
+						sendInfoMessage(" §bThe next round has been initialized! It will be begin in...");
 						new Task2(plugin, countdownMessages).run();
 						Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin,
 						  new Runnable(){ public void run(){
-						    Bukkit.broadcastMessage(introMessage + " §bRound 5 has begun!");
+							  sendInfoMessage(" §bRound 5 has begun!");
 								for (int i = 0; i < 30; i++){
 									for (World world : Bukkit.getWorlds()){
 						        world.spawnEntity(new Location(arenaWorld, x, y, z), EntityType.ZOMBIE);
@@ -653,7 +728,7 @@ public class mm_command implements CommandExecutor{
 						return true;
 					}
 					if (round5Complete == true){
-						Bukkit.broadcastMessage(introMessage + " §bThe next round has been initialized! It will be begin in...");
+						sendInfoMessage(" §bThe next round has been initialized! It will be begin in...");
 						
 						return true;
 					}
@@ -668,4 +743,124 @@ public class mm_command implements CommandExecutor{
 		}
 		return false;
 	}
+	
+	public void sendInfoMessage(String message){
+		String introMessage = plugin.getConfig().getString("introMessage");
+		List<String> mmPlayers = plugin.getConfig().getStringList("MM.players");
+		for (int i = 1; i == mmPlayers.size(); i++){
+			Player p = Bukkit.getPlayer(mmPlayers.get(i - 1));
+			p.sendMessage(introMessage + message);
+		}
+	}
+	
+	public void clearInventory(){
+		List<String> mmPlayers = plugin.getConfig().getStringList("MM.players");
+		for (int i = 1; i == mmPlayers.size(); i++){
+			Player p = Bukkit.getPlayer(mmPlayers.get(i - 1));
+			PlayerInventory inv = p.getInventory();
+			inv.clear();
+			ItemStack[] armourContents = { new ItemStack(Material.AIR), new ItemStack(Material.AIR), new ItemStack(Material.AIR), new ItemStack(Material.AIR), };
+			inv.setArmorContents(armourContents);
+		}
+	}
+	
+	public void giveDiscs(){
+		List<String> mmPlayers = plugin.getConfig().getStringList("MM.players");
+		ItemStack green = new ItemStack(Material.GREEN_RECORD, 1);
+		ItemStack yellow = new ItemStack(Material.GOLD_RECORD, 1);
+		ItemMeta greenName = green.getItemMeta();
+		ItemMeta yellowName = yellow.getItemMeta();
+		List<String> greenLore = new ArrayList<String>();
+		greenLore.add("§r§eRight click me to");
+		greenLore.add("§r§eactivate your");
+		greenLore.add("§r§ealpha ability.");
+		List<String> yellowLore = new ArrayList<String>();
+		yellowLore.add("§r§eRight click me to");
+		yellowLore.add("§r§eactivate your");
+		yellowLore.add("§r§ealpha ability.");
+		greenName.setDisplayName("§2§lAlpha Ability");
+		greenName.setLore(greenLore);
+		yellowName.setDisplayName("§6§lOmega Ability");
+		yellowName.setLore(yellowLore);
+		green.setItemMeta(greenName);
+		yellow.setItemMeta(yellowName);
+		for (int i = 1; i == mmPlayers.size(); i++){
+			Player p = Bukkit.getPlayer(mmPlayers.get(i - 1));
+			PlayerInventory inv = p.getInventory();
+			inv.setItem(7, green);
+			inv.setItem(8, yellow);
+		}
+	}
+	
+	public void distributeItems(){
+		List<String> mmPlayers = plugin.getConfig().getStringList("MM.players");
+		for (int i = 1; i == mmPlayers.size(); i++){
+			String playerName = mmPlayers.get(i - 1);
+			Player p = Bukkit.getPlayer(playerName);
+			final String currentClass = plugin.getConfig().getString("Users." + p.getName() + ".class");
+			
+			plugin.getConfig().set("turn", playerName);
+			plugin.saveConfig();
+			Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin,
+					new Runnable(){
+						public void run(){
+							if (currentClass == "medic"){
+								medicKit();
+							}
+							if (currentClass == "spirit"){
+								
+							}
+							if (currentClass == "warrior"){
+								
+							}
+							if (currentClass == "inferno"){
+								
+							}
+							if (currentClass == "roadrunner"){
+								
+							}
+							if (currentClass == "sniper"){
+								
+							}
+						}
+			}, 20);
+		}
+	}
+	
+	public void medicKit(){
+		Player p = Bukkit.getPlayer(plugin.getConfig().getString("turn"));
+		PlayerInventory inv = p.getInventory();
+		ItemStack helmet = new ItemStack(Material.GOLD_HELMET, 1);
+		ItemStack chest = new ItemStack(Material.GOLD_CHESTPLATE, 1);
+		ItemStack legs = new ItemStack(Material.GOLD_LEGGINGS, 1);
+		ItemStack boots = new ItemStack(Material.GOLD_BOOTS, 1);
+		ItemStack sword = new ItemStack(Material.IRON_SWORD, 1);
+		ItemMeta helmetName = helmet.getItemMeta();
+		ItemMeta chestName = chest.getItemMeta();
+		ItemMeta legsName = legs.getItemMeta();
+		ItemMeta bootsName = legs.getItemMeta();
+		ItemMeta swordName = sword.getItemMeta();
+		helmetName.setDisplayName("§eMedic Helmet");
+		chestName.setDisplayName("§eMedic Chestplate");
+		legsName.setDisplayName("§eMedic Leggings");
+		bootsName.setDisplayName("§eMedic Booties");
+		swordName.setDisplayName("§eMedic Sword");
+		helmetName.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true);
+		chestName.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true);
+		legsName.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true);
+		bootsName.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true);
+		swordName.addEnchant(Enchantment.DURABILITY, 10, true);
+		helmet.setItemMeta(helmetName);
+		chest.setItemMeta(chestName);
+		legs.setItemMeta(legsName);
+		boots.setItemMeta(bootsName);
+		sword.setItemMeta(swordName);
+		inv.setHelmet(helmet);
+		inv.setChestplate(chest);
+		inv.setLeggings(legs);
+		inv.setBoots(boots);
+		inv.setItem(0, sword);
+		plugin.getConfig().set("turn", null);
+	}
+	
 }
