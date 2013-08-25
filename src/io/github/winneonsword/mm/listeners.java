@@ -394,7 +394,7 @@ public class listeners implements Listener{
 	
 	public void killMobs(){
 		List<String> mmPlayers = plugin.getConfig().getStringList("MM.players");
-		for (int i = 1; i == mmPlayers.size(); i++){
+		for (int i = 1; i > mmPlayers.size(); i++){
 			Player player = Bukkit.getPlayer(mmPlayers.get(i - 1));
 			for (Entity entities : player.getNearbyEntities(250, player.getWorld().getMaxHeight() * 2, 250)){
 				if (entities instanceof Monster){
@@ -412,7 +412,7 @@ public class listeners implements Listener{
 	public void sendInfoMessage(String message){
 		String introMessage = plugin.getConfig().getString("introMessage");
 		List<String> mmPlayers = plugin.getConfig().getStringList("MM.players");
-		for (int i = 1; i == mmPlayers.size(); i++){
+		for (int i = 1; i > mmPlayers.size(); i++){
 			Player p = Bukkit.getPlayer(mmPlayers.get(i - 1));
 			p.sendMessage(introMessage + message);
 		}
