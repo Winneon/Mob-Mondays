@@ -771,6 +771,21 @@ public class mm_command implements CommandExecutor{
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
+	public void getInventory(){
+		List<String> mmPlayers = plugin.getConfig().getStringList("MM.players");
+		for (int i = 0; i < mmPlayers.size(); i++){
+			Player p = Bukkit.getPlayer(mmPlayers.get(i));
+			PlayerInventory inv = p.getInventory();
+			List<ItemStack> invenList = (List<ItemStack>) plugin.getConfig().get("Users." + p.getName() + ".inventory");
+			List<ItemStack> armourList = (List<ItemStack>) plugin.getConfig().get("Users." + p.getName() + "armour");
+			ItemStack[] inven = invenList.toArray(new ItemStack[0]);
+			ItemStack[] armour = armourList.toArray(new ItemStack[0]);
+			inv.setContents(inven);
+			inv.setArmorContents(armour);
+		}
+	}
+	
 	public void giveDiscs(){
 		List<String> mmPlayers = plugin.getConfig().getStringList("MM.players");
 		ItemStack green = new ItemStack(Material.GREEN_RECORD, 1);
