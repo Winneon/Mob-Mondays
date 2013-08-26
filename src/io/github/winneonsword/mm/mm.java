@@ -41,14 +41,18 @@ class Task implements Runnable{
 	}
 	
 	public void run(){
+		sendInfoMessage(" " + list.get(count++));
+		if (count < list.size()){
+			plugin.getServer().getScheduler().runTaskLater(plugin, this, 100);
+		}
+	}
+	
+	public void sendInfoMessage(String message){
 		String introMessage = plugin.getConfig().getString("introMessage");
 		List<String> mmPlayers = plugin.getConfig().getStringList("MM.players");
 		for (int i = 0; i < mmPlayers.size(); i++){
 			Player p = Bukkit.getPlayer(mmPlayers.get(i));
-			p.sendMessage(introMessage + " " + list.get(count++));
-		}
-		if (count < list.size()){
-			plugin.getServer().getScheduler().runTaskLater(plugin, this, 100);
+			p.sendMessage(introMessage + message);
 		}
 	}
 }
@@ -63,14 +67,18 @@ class Task2 implements Runnable{
 	}
 	
 	public void run(){
+		sendInfoMessage(" " + list.get(count++));
+		if (count < list.size()){
+			plugin.getServer().getScheduler().runTaskLater(plugin, this, 40);
+		}
+	}
+	
+	public void sendInfoMessage(String message){
 		String introMessage = plugin.getConfig().getString("introMessage");
 		List<String> mmPlayers = plugin.getConfig().getStringList("MM.players");
 		for (int i = 0; i < mmPlayers.size(); i++){
 			Player p = Bukkit.getPlayer(mmPlayers.get(i));
-			p.sendMessage(introMessage + " " + list.get(count++));
-		}
-		if (count < list.size()){
-			plugin.getServer().getScheduler().runTaskLater(plugin, this, 40);
+			p.sendMessage(introMessage + message);
 		}
 	}
 }

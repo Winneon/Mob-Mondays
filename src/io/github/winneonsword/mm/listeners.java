@@ -40,12 +40,12 @@ public class listeners implements Listener{
 	ItemStack bow = new ItemStack(Material.BOW, 1);
 	ItemStack air = new ItemStack(Material.AIR, 1);
 	
-	@EventHandler(priority = EventPriority.MONITOR)
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onEntityDeath(PlayerDeathEvent event){
 		return;
 	}
 	
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onCreatureSpawn(CreatureSpawnEvent event){
 		int roundNumber = plugin.getConfig().getInt("roundNumber");
 		LivingEntity entity = event.getEntity();
@@ -65,7 +65,7 @@ public class listeners implements Listener{
 		return;
 	}
 	
-	@EventHandler(priority = EventPriority.MONITOR)
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onEntityDeath(EntityDeathEvent event){
 		int roundNumber = plugin.getConfig().getInt("roundNumber");
 		boolean gameStarted = plugin.getConfig().getBoolean("gameStarted");
@@ -309,81 +309,107 @@ public class listeners implements Listener{
 		}
 	}
 	
-	@EventHandler(priority = EventPriority.MONITOR)
+	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerInteract(PlayerInteractEvent event){
 		Player player = event.getPlayer();
 		String introMessage = plugin.getConfig().getString("introMessage");
 		boolean gameStarted = plugin.getConfig().getBoolean("gameStarted");
 		
 		if (gameStarted == true){
-			if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK){	
-				if (!(player.getInventory().getItemInHand().getTypeId() == 406) || !(player.getInventory().getItemInHand().getTypeId() == 2257) || !(player.getInventory().getItemInHand().getTypeId() == 2256)){
-					return;
-				}
-				if (player.getInventory().getItemInHand().getItemMeta().getDisplayName().contains("Elemental Shard")){
-					int shardCount = plugin.getConfig().getInt("Users." + player.getName() + ".shards");
-					int shardCountInHand = player.getInventory().getItemInHand().getAmount();
-					int quantity = shardCountInHand + shardCount;
+			if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK){
+				try {
+					if (player.getInventory().getItemInHand().getItemMeta().getDisplayName().contains("Elemental Shard") && player.getInventory().getItemInHand().getType() == Material.QUARTZ){
+						int shardCount = plugin.getConfig().getInt("Users." + player.getName() + ".shards");
+						int shardCountInHand = player.getInventory().getItemInHand().getAmount();
+						int quantity = shardCountInHand + shardCount;
+						
+						plugin.getConfig().set("Users." + player.getName() + ".shards", quantity);
+						plugin.saveConfig();
+						player.sendMessage(introMessage + " §7You have deposited " + shardCountInHand + " shard(s)!");
+						player.setItemInHand(air);
+						return;
+					}
+				} catch (NullPointerException e){
 					
-					plugin.getConfig().set("Users." + player.getName() + ".shards", quantity);
-					plugin.saveConfig();
-					player.sendMessage(introMessage + " §7You have deposited " + shardCountInHand + " shard(s)!");
-					player.setItemInHand(air);
-					return;
 				}
-				if (player.getInventory().getItemInHand().getItemMeta().getDisplayName().contains("Ability")){
-					String currentClass = plugin.getConfig().getString("Users." + player.getName() + ".class");
-					if (currentClass == "medic"){
-						if (player.getInventory().getItemInHand().getItemMeta().getDisplayName().contains("Alpha")){
-							sendInfoMessage("test");
-							plugin.getConfig().set("usingAbility", player.getName());
-							medicAlphaAbility();
-							return;
+				try {
+					if (player.getInventory().getItemInHand().getItemMeta().getDisplayName().contains("Ability")){
+						String currentClass = plugin.getConfig().getString("Users." + player.getName() + ".class");
+						if (currentClass == "medic"){
+							if (player.getInventory().getItemInHand().getItemMeta().getDisplayName().contains("Alpha")){
+								plugin.getConfig().set("usingAbility", player.getName());
+								medicAlphaAbility();
+								return;
+							}
+							if (player.getInventory().getItemInHand().getItemMeta().getDisplayName().contains("Omega")){
+								plugin.getConfig().set("usingAbility", player.getName());
+								medicOmegaAbility();
+								return;
+							}
 						}
-						if (player.getInventory().getItemInHand().getItemMeta().getDisplayName().contains("Omega")){
-							return;
+						if (currentClass == "spirit"){
+							if (player.getInventory().getItemInHand().getItemMeta().getDisplayName().contains("Alpha")){
+								plugin.getConfig().set("usingAbility", player.getName());
+								spiritAlphaAbility();
+								return;
+							}
+							if (player.getInventory().getItemInHand().getItemMeta().getDisplayName().contains("Omega")){
+								plugin.getConfig().set("usingAbility", player.getName());
+								
+								return;
+							}
+						}
+						if (currentClass == "warrior"){
+							if (player.getInventory().getItemInHand().getItemMeta().getDisplayName().contains("Alpha")){
+								plugin.getConfig().set("usingAbility", player.getName());
+								
+								return;
+							}
+							if (player.getInventory().getItemInHand().getItemMeta().getDisplayName().contains("Omega")){
+								plugin.getConfig().set("usingAbility", player.getName());
+								
+								return;
+							}
+						}
+						if (currentClass == "inferno"){
+							if (player.getInventory().getItemInHand().getItemMeta().getDisplayName().contains("Alpha")){
+								plugin.getConfig().set("usingAbility", player.getName());
+								
+								return;
+							}
+							if (player.getInventory().getItemInHand().getItemMeta().getDisplayName().contains("Omega")){
+								plugin.getConfig().set("usingAbility", player.getName());
+								
+								return;
+							}
+						}
+						if (currentClass == "roadrunner"){
+							if (player.getInventory().getItemInHand().getItemMeta().getDisplayName().contains("Alpha")){
+								plugin.getConfig().set("usingAbility", player.getName());
+								
+								return;
+							}
+							if (player.getInventory().getItemInHand().getItemMeta().getDisplayName().contains("Omega")){
+								plugin.getConfig().set("usingAbility", player.getName());
+								
+								return;
+							}
+						}
+						if (currentClass == "sniper"){
+							if (player.getInventory().getItemInHand().getItemMeta().getDisplayName().contains("Alpha")){
+								plugin.getConfig().set("usingAbility", player.getName());
+								
+								return;
+							}
+							if (player.getInventory().getItemInHand().getItemMeta().getDisplayName().contains("Omega")){
+								plugin.getConfig().set("usingAbility", player.getName());
+								
+								return;
+							}
 						}
 					}
-					if (currentClass == "spirit"){
-						if (player.getInventory().getItemInHand().getItemMeta().getDisplayName().contains("Alpha")){
-							return;
-						}
-						if (player.getInventory().getItemInHand().getItemMeta().getDisplayName().contains("Omega")){
-							return;
-						}
-					}
-					if (currentClass == "warrior"){
-						if (player.getInventory().getItemInHand().getItemMeta().getDisplayName().contains("Alpha")){
-							return;
-						}
-						if (player.getInventory().getItemInHand().getItemMeta().getDisplayName().contains("Omega")){
-							return;
-						}
-					}
-					if (currentClass == "inferno"){
-						if (player.getInventory().getItemInHand().getItemMeta().getDisplayName().contains("Alpha")){
-							return;
-						}
-						if (player.getInventory().getItemInHand().getItemMeta().getDisplayName().contains("Omega")){
-							return;
-						}
-					}
-					if (currentClass == "roadrunner"){
-						if (player.getInventory().getItemInHand().getItemMeta().getDisplayName().contains("Alpha")){
-							return;
-						}
-						if (player.getInventory().getItemInHand().getItemMeta().getDisplayName().contains("Omega")){
-							return;
-						}
-					}
-					if (currentClass == "sniper"){
-						if (player.getInventory().getItemInHand().getItemMeta().getDisplayName().contains("Alpha")){
-							return;
-						}
-						if (player.getInventory().getItemInHand().getItemMeta().getDisplayName().contains("Omega")){
-							return;
-						}
-					}
+				} catch (NullPointerException e){
+					
 				}
 				return;
 			}
@@ -394,8 +420,8 @@ public class listeners implements Listener{
 	
 	public void killMobs(){
 		List<String> mmPlayers = plugin.getConfig().getStringList("MM.players");
-		for (int i = 1; i > mmPlayers.size(); i++){
-			Player player = Bukkit.getPlayer(mmPlayers.get(i - 1));
+		for (int i = 0; i < mmPlayers.size(); i++){
+			Player player = Bukkit.getPlayer(mmPlayers.get(i));
 			for (Entity entities : player.getNearbyEntities(250, player.getWorld().getMaxHeight() * 2, 250)){
 				if (entities instanceof Monster){
 				((Monster) entities).remove();
@@ -412,11 +438,12 @@ public class listeners implements Listener{
 	public void sendInfoMessage(String message){
 		String introMessage = plugin.getConfig().getString("introMessage");
 		List<String> mmPlayers = plugin.getConfig().getStringList("MM.players");
-		for (int i = 1; i > mmPlayers.size(); i++){
-			Player p = Bukkit.getPlayer(mmPlayers.get(i - 1));
+		for (int i = 0; i < mmPlayers.size(); i++){
+			Player p = Bukkit.getPlayer(mmPlayers.get(i));
 			p.sendMessage(introMessage + message);
 		}
 	}
+	
 	public void medicAlphaAbility(){
 		Player p = Bukkit.getPlayer(plugin.getConfig().getString("usingAbility"));
 		String introMessage = plugin.getConfig().getString("introMessage");
@@ -425,11 +452,60 @@ public class listeners implements Listener{
 			p.sendMessage(introMessage + " §cYou do not have 5 shards in your account!");
 			return;
 		}
-		p.addPotionEffect(new PotionEffect(PotionEffectType.HEALTH_BOOST, 60, 5));
-		p.sendMessage(introMessage + " §7You were given 5 extra hearts for 1 minute! §c(5 shards have been deducted from your account.)");
+		p.addPotionEffect(new PotionEffect(PotionEffectType.HEALTH_BOOST, 1200, 2));
+		p.setHealth(32);
+		p.sendMessage(introMessage + " §7You were given 6 extra hearts for 1 minute!");
+		p.sendMessage(introMessage + " §c(5 shards have been deducted from your account.)");
 		plugin.getConfig().set("Users." + p.getName() + ".shards", shardCount - 5);
 		plugin.getConfig().set("usingAbility", null);
 		plugin.saveConfig();
+	}
+	
+	public void medicOmegaAbility(){
+		Player p = Bukkit.getPlayer(plugin.getConfig().getString("usingAbility"));
+		String introMessage = plugin.getConfig().getString("introMessage");
+		int shardCount = plugin.getConfig().getInt("Users." + p.getName() + ".shards");
+		if (shardCount < 8){
+			p.sendMessage(introMessage + " §cYou do not have 8 shards in your account!");
+			return;
+		}
+		List<String> mmPlayers = plugin.getConfig().getStringList("MM.players");
+		for (int i = 0; i < mmPlayers.size(); i++){
+			Player player = Bukkit.getPlayer(mmPlayers.get(i));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 1200, 1));
+		}
+		p.sendMessage(introMessage + " §7Everyone was given Regeneration II for 1 minute!");
+		p.sendMessage(introMessage + " §c(8 shards have been deducted from your account.)");
+		plugin.getConfig().set("Users." + p.getName() + ".shards", shardCount - 8);
+		plugin.getConfig().set("usingAbility", null);
+		plugin.saveConfig();
+	}
+	
+	public void spiritAlphaAbility(){
+		final Player p = Bukkit.getPlayer(plugin.getConfig().getString("usingAbility"));
+		final String introMessage = plugin.getConfig().getString("introMessage");
+		int shardCount = plugin.getConfig().getInt("Users." + p.getName() + ".shards");
+		if (shardCount < 5){
+			p.sendMessage(introMessage + " §cYou do not have 5 shards in your account!");
+			return;
+		}
+		plugin.getConfig().set("Users." + p.getName() + ".shards", shardCount - 5);
+		plugin.getConfig().set("usingAbility", null);
+		plugin.saveConfig();
+		p.setAllowFlight(true);
+		p.sendMessage(introMessage + " §7You were given fly mode for 1 minute! Double-tap §cSPACE §7to fly.");
+		p.sendMessage(introMessage + " §c(5 shards have been deducted from your account.)");
+		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin,
+				  new Runnable(){ public void run(){
+					  p.setAllowFlight(false);
+					  World world = p.getWorld();
+					  int x = p.getLocation().getBlockX();
+					  int z = p.getLocation().getBlockZ();
+					  int y = world.getHighestBlockYAt(x, z);					  
+					  p.teleport(new Location(world, x, y, z));
+					  p.sendMessage(introMessage + " §7Your fly mode has worn off!");
+				  }
+		}, 1200);
 	}
 	
 }

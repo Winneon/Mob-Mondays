@@ -738,7 +738,7 @@ public class mm_command implements CommandExecutor{
 				return true;
 			}
 		} else {
-			sender.sendMessage("You must be a player to execute this command!");
+			sender.sendMessage("You must be a player to execute thifs command!");
 			return false;
 		}
 		return false;
@@ -747,19 +747,26 @@ public class mm_command implements CommandExecutor{
 	public void sendInfoMessage(String message){
 		String introMessage = plugin.getConfig().getString("introMessage");
 		List<String> mmPlayers = plugin.getConfig().getStringList("MM.players");
-		for (int i = 1; i == mmPlayers.size(); i++){
-			Player p = Bukkit.getPlayer(mmPlayers.get(i - 1));
+		for (int i = 0; i < mmPlayers.size(); i++){
+			Player p = Bukkit.getPlayer(mmPlayers.get(i));
 			p.sendMessage(introMessage + message);
 		}
 	}
 	
 	public void clearInventory(){
 		List<String> mmPlayers = plugin.getConfig().getStringList("MM.players");
-		for (int i = 1; i == mmPlayers.size(); i++){
-			Player p = Bukkit.getPlayer(mmPlayers.get(i - 1));
+		for (int i = 0; i < mmPlayers.size(); i++){
+			Player p = Bukkit.getPlayer(mmPlayers.get(i));
 			PlayerInventory inv = p.getInventory();
+			ItemStack[] inven = inv.getContents();
+			ItemStack[] armour = inv.getArmorContents();
+			plugin.getConfig().set("Users." + p.getName() + ".inventory", inven);
+			plugin.getConfig().set("Users." + p.getName() + ".armour", armour);
 			inv.clear();
-			ItemStack[] armourContents = { new ItemStack(Material.AIR), new ItemStack(Material.AIR), new ItemStack(Material.AIR), new ItemStack(Material.AIR), };
+			ItemStack[] armourContents = { new ItemStack(Material.AIR),
+					new ItemStack(Material.AIR),
+					new ItemStack(Material.AIR),
+					new ItemStack(Material.AIR), };
 			inv.setArmorContents(armourContents);
 		}
 	}
@@ -784,8 +791,8 @@ public class mm_command implements CommandExecutor{
 		yellowName.setLore(yellowLore);
 		green.setItemMeta(greenName);
 		yellow.setItemMeta(yellowName);
-		for (int i = 1; i == mmPlayers.size(); i++){
-			Player p = Bukkit.getPlayer(mmPlayers.get(i - 1));
+		for (int i = 0; i < mmPlayers.size(); i++){
+			Player p = Bukkit.getPlayer(mmPlayers.get(i));
 			PlayerInventory inv = p.getInventory();
 			inv.setItem(7, green);
 			inv.setItem(8, yellow);
@@ -794,36 +801,30 @@ public class mm_command implements CommandExecutor{
 	
 	public void distributeItems(){
 		List<String> mmPlayers = plugin.getConfig().getStringList("MM.players");
-		for (int i = 1; i == mmPlayers.size(); i++){
-			String playerName = mmPlayers.get(i - 1);
+		for (int i = 0; i < mmPlayers.size(); i++){
+			String playerName = mmPlayers.get(i);
 			Player p = Bukkit.getPlayer(playerName);
-			final String currentClass = plugin.getConfig().getString("Users." + p.getName() + ".class");
-			
+			String currentClass = plugin.getConfig().getString("Users." + p.getName() + ".class");
 			plugin.getConfig().set("turn", playerName);
 			plugin.saveConfig();
-			Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin,
-					new Runnable(){
-						public void run(){
-							if (currentClass == "medic"){
-								medicKit();
-							}
-							if (currentClass == "spirit"){
-								
-							}
-							if (currentClass == "warrior"){
-								
-							}
-							if (currentClass == "inferno"){
-								
-							}
-							if (currentClass == "roadrunner"){
-								
-							}
-							if (currentClass == "sniper"){
-								
-							}
-						}
-			}, 20);
+			if (currentClass == "medic"){
+				medicKit();
+			}
+			if (currentClass == "spirit"){
+				
+			}
+			if (currentClass == "warrior"){
+				
+			}
+			if (currentClass == "inferno"){
+				
+			}
+			if (currentClass == "roadrunner"){
+				
+			}
+			if (currentClass == "sniper"){
+				
+			}
 		}
 	}
 	
@@ -846,9 +847,13 @@ public class mm_command implements CommandExecutor{
 		bootsName.setDisplayName("§eMedic Booties");
 		swordName.setDisplayName("§eMedic Sword");
 		helmetName.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true);
+		helmetName.addEnchant(Enchantment.DURABILITY, 10, true);
 		chestName.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true);
+		chestName.addEnchant(Enchantment.DURABILITY, 10, true);
 		legsName.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true);
+		legsName.addEnchant(Enchantment.DURABILITY, 10, true);
 		bootsName.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true);
+		bootsName.addEnchant(Enchantment.DURABILITY, 10, true);
 		swordName.addEnchant(Enchantment.DURABILITY, 10, true);
 		helmet.setItemMeta(helmetName);
 		chest.setItemMeta(chestName);
