@@ -1,5 +1,5 @@
 ﻿useDayTimer: false
-introMessage: §e[ §7mm §e]
+introMessage: '&e[ &7mm &e]'
 minSize: 1
 welcomeMessages:
 - '§7Welcome to Mob Mondays!'
@@ -14,6 +14,7 @@ welcomeMessages:
 - '§7To use your §comega §7ability, right click the §cyellow §7music disc!'
 - '§7Remember, abilities use §cshards §7as a cost! The prices are listed under §c/mm commands§7.'
 - '§7To deposit the §cshards §7you collect, just §cright click §7them!'
+- '§c§lWARNING: §cMM will be difficult. Work together with your teammates and you may live to win the game!'
 - '§7Allright! Here we go!'
 countdownMessages:
 - '§aThree!'

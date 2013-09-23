@@ -1,6 +1,6 @@
 name: MobMondays
-main: io.github.winneonsword.mm.mm
-version: 1.0-a
+main: com.github.winneonsword.MM.MainMM
+version: 1.0-o
 commands:
   mm:
     description: The main help menu of MM.

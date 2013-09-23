@@ -1,4 +1,4 @@
-package io.github.winneonsword.mm;
+package com.github.winneonsword.MM;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -6,21 +6,21 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
 
-public final class mm extends JavaPlugin {
+public final class MainMM extends JavaPlugin {
 	
-	mm plugin;
+	MainMM plugin;
 	
-	public mm(){
+	public MainMM(){
 		
 	}
 	
-	public final listeners Listener = new listeners(this);
+	public final ListenersMM Listener = new ListenersMM(this);
 	
 	@Override
 	public void onEnable(){
 		getLogger().info("MM has been enabled! Please set up your options in the provided config.yml (if you haven't already).");
 		getServer().getPluginManager().registerEvents(this.Listener, this);
-		getCommand("mm").setExecutor(new mm_command(this));
+		getCommand("mm").setExecutor(new CommandMM(this));
 		saveDefaultConfig();
 	}
 
@@ -31,11 +31,11 @@ public final class mm extends JavaPlugin {
 	
 }
 class Task implements Runnable{
-	private mm plugin;
+	private MainMM plugin;
 	private List<String> list;
 	private int count = 0;
 	
-	public Task(mm plugin, List<String> list){
+	public Task(MainMM plugin, List<String> list){
 		this.plugin = plugin;
 		this.list = list;
 	}
@@ -57,11 +57,11 @@ class Task implements Runnable{
 	}
 }
 class Task2 implements Runnable{
-	private mm plugin;
+	private MainMM plugin;
 	private List<String> list;
 	private int count = 0;
 	
-	public Task2(mm plugin, List<String> list){
+	public Task2(MainMM plugin, List<String> list){
 		this.plugin = plugin;
 		this.list = list;
 	}
